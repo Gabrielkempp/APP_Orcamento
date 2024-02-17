@@ -43,7 +43,7 @@ style.theme_use("clam")
 frameCima = Frame(janela, width=1043, height=50, background=co11, relief= "flat")
 frameCima.grid(row=0, column=0, padx=1)
 
-frameMeio = Frame(janela, width=1043, height=361, background=co11, pady=20, relief= "raised")
+frameMeio = Frame(janela, width=1043, height=325, background=co11, pady=20, relief= "raised")
 frameMeio.grid(row=1, column=0, pady=2, padx= 1, sticky=NSEW)
 
 frameBaixo = Frame(janela, width=1043, height=300, background=co11, relief= "flat")
@@ -51,6 +51,7 @@ frameBaixo.grid(row=2, column=0, pady=0, padx= 1, sticky=NSEW)
 
 frame_gra_pie = Frame(frameMeio, width=580, height=250, background=co11)
 frame_gra_pie.place(x=415, y=5)
+
 
 #Trabalhando no frame de Cima
 
@@ -82,21 +83,6 @@ def percentagem():
     l_percentagem = Label(frameMeio, text='{:,.2f}%'.format(valor), anchor=NW, font=('Verdana 12 bold'), bg=co11, fg=co1)
     l_percentagem.place(x=200, y=17)
 
-'''#Função para grafico bar ---------------------------
-def percentagem():
-    l_nome = Label(frameMeio, text='Porcentagem da Receita Gasta', height=1, anchor=NW, font=('Verdana 12 bold'), bg=co11, fg=co1)
-    l_nome.place(x=10, y=-10)
-
-    style = ttk.Style()
-    style.theme_use('default')
-    style.configure('black.Horizontal.TProgressbar', background="#2ecc71")
-    style.configure("TProgressbar", thickness=15)
-
-    bar = Progressbar(frameMeio, length=200, style='black.Horizontal.TProgressbar', value=50)
-    bar.place(x=15, y=20)
-
-    l_percentagem = Label(frameMeio, text='{:,.2f}%'.format(bar['value']), anchor=NW, font=('Verdana 12 bold'), bg=co11, fg=co1)
-    l_percentagem.place(x=220, y=17)'''
 
 # Função para gráfico de barras ---------------------------
 def grafico_bar():
@@ -142,7 +128,7 @@ def grafico_bar():
     ax.xaxis.grid(False)
 
     canva = FigureCanvasTkAgg(figura, frameMeio)
-    canva.get_tk_widget().place(x=10, y=70)
+    canva.get_tk_widget().place(x=20, y=70)
 
 
 #Função de Resumo total
@@ -187,10 +173,10 @@ def grafico_pie():
 
     ax.pie(lista_valores, explode=explode, wedgeprops=dict(width=0.2), autopct='%1.1f%%', colors=colors,
                shadow=False, startangle=90, textprops={'color': 'white'})
-    ax.legend(lista_categorias, loc="center right", bbox_to_anchor=(1.50, 0.20))
+    ax.legend(lista_categorias, loc="center right", bbox_to_anchor=(1.45, 0.20))
 
     canva_categoria = FigureCanvasTkAgg(figura, frame_gra_pie)
-    canva_categoria.get_tk_widget().grid(row=20, column=20, padx=20, pady=20)
+    canva_categoria.get_tk_widget().grid(row=10, column=20, padx=20, pady=0)
 
 
 
