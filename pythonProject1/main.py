@@ -46,7 +46,7 @@ frameCima.grid(row=0, column=0, padx=1)
 frameMeio = Frame(janela, width=1043, height=325, background=co11, pady=20, relief= "raised")
 frameMeio.grid(row=1, column=0, pady=2, padx= 1, sticky=NSEW)
 
-frameBaixo = Frame(janela, width=1043, height=300, background=co11, relief= "flat")
+frameBaixo = Frame(janela, width=1043, height=270, background=co11, relief= "flat")
 frameBaixo.grid(row=2, column=0, pady=0, padx= 1, sticky=NSEW)
 
 frame_gra_pie = Frame(frameMeio, width=580, height=250, background=co11)
@@ -128,7 +128,7 @@ def grafico_bar():
     ax.xaxis.grid(False)
 
     canva = FigureCanvasTkAgg(figura, frameMeio)
-    canva.get_tk_widget().place(x=20, y=70)
+    canva.get_tk_widget().place(x=20, y=80)
 
 
 #Função de Resumo total
@@ -136,25 +136,25 @@ def resumo():
     valor = [500, 600, 420]
 
     l_linha = Label(frameMeio, text="", width=215, height=1, anchor= NW, font=('Arial 1'), bg=co1)
-    l_linha.place(x=309, y=52)
+    l_linha.place(x=309, y=62)
     l_sumario = Label(frameMeio, text="Total Da Renda Mensal      ", anchor=NW, font=('Verdana 12 bold'), bg=co11, fg="#2ecc71")
-    l_sumario.place(x=309, y=35)
+    l_sumario.place(x=309, y=45)
     l_sumario = Label(frameMeio, text="R$ {:,.2f}".format(valor[0]), anchor=NW, font=('Arial 17'), bg=co11, fg=co1)
-    l_sumario.place(x=309, y=60)
+    l_sumario.place(x=309, y=70)
 
     l_linha = Label(frameMeio, text="", width=215, height=1, anchor=NW, font=('Arial 1'), bg=co1)
-    l_linha.place(x=309, y=122)
+    l_linha.place(x=309, y=132)
     l_sumario = Label(frameMeio, text="Total De Gasto Mensal    ", anchor=NW, font=('Verdana 12 bold'), bg=co11,fg="#e74c3c")
-    l_sumario.place(x=309, y=105)
+    l_sumario.place(x=309, y=115)
     l_sumario = Label(frameMeio, text="R$ {:,.2f}".format(valor[1]), anchor=NW, font=('Arial 17'), bg=co11, fg=co1)
-    l_sumario.place(x=309, y=140)
+    l_sumario.place(x=309, y=150)
 
     l_linha = Label(frameMeio, text="", width=215, height=1, anchor=NW, font=('Arial 1'), bg=co1)
-    l_linha.place(x=309, y=207)
+    l_linha.place(x=309, y=217)
     l_sumario = Label(frameMeio, text="Total Saldo Em Caixa       ", anchor=NW, font=('Verdana 12 bold'), bg=co11,fg="#3498db")
-    l_sumario.place(x=309, y=190)
+    l_sumario.place(x=309, y=200)
     l_sumario = Label(frameMeio, text="R$ {:,.2f}".format(valor[2]), anchor=NW, font=('Arial 17'), bg=co11, fg=co1)
-    l_sumario.place(x=309, y=220)
+    l_sumario.place(x=309, y=230)
 
 #Função Grafico Pie
 def grafico_pie():
@@ -178,11 +178,64 @@ def grafico_pie():
     canva_categoria = FigureCanvasTkAgg(figura, frame_gra_pie)
     canva_categoria.get_tk_widget().grid(row=10, column=20, padx=20, pady=0)
 
-
-
-
 percentagem()
 grafico_bar()
 resumo()
 grafico_pie()
+
+#Criando frames dentro do frameBaixo
+frameRenda = Frame(frameBaixo, width=300, height=270, background=co11)
+frameRenda.grid(row=0, column=0) #padx=1
+
+frameOperacoes = Frame(frameBaixo, width=220, height=270, background=co11)
+frameOperacoes.grid(row=0, column=1, padx=5)
+
+frameConfiguracao = Frame(frameBaixo, width=220, height=270, background=co11)
+frameConfiguracao.grid(row=0, column=2, padx=5)
+
+#Tabela Renda Mensal------------------------------------------------
+app_tabela = Label(frameBaixo, text = "Tabela Receitas e Despesas", anchor= NW, font=("Verdana 12 bold"),bg= co11, fg=co1)
+app_tabela.place(x=45, y=0)
+
+#Função para mostrar_renda
+def mostrar_renda():
+
+    tabela_head = ['#Id', 'Categoria', 'Data', 'Quantidade']
+
+    lista_itens = [[0, 2, 3, 4], [0, 2, 3, 4], [0, 2, 3, 4], [0, 2, 3, 4]]
+
+    global tree
+
+    tree = ttk.Treeview(frameRenda, selectmode="extended", columns=tabela_head, show="headings")
+
+    #vertical scrollbar
+    vsb = ttk.Scrollbar(frameRenda, orient="vertical", command=tree.yview)
+    #horizontal scrollbar
+    hsb = ttk.Scrollbar(frameRenda, orient="horizontal", command=tree.xview)
+
+    tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
+
+
+    tree.grid(column=0, row=0, pady=0, padx=0, sticky='nsew')
+    vsb.grid(column=1, row=0, padx= 0, pady=0, sticky='ns')
+    hsb.grid(column=0, row=1, padx=0,sticky='ew')
+
+    hd = ["center", "center", "center", "center"]
+    h = [30, 100, 100, 100]
+    n = 0
+
+    for col in tabela_head:
+        tree.heading(col, text=col.title(), anchor=CENTER)
+        #adjust the column 's width to the header string
+        tree.column(col, width=h[n], anchor=hd[n])
+
+        n += 1
+
+    for item in lista_itens:
+        tree.insert('', 'end', values=item)
+
+mostrar_renda()
+frameRenda.grid(pady=(12, 0), padx=(5,0))
+
+
 janela.mainloop()
