@@ -12,21 +12,26 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 
+# Importando Calendario
+from tkcalendar import Calendar, DateEntry
+from datetime import date
+
 #Cores
 co0 = "#2e2d2b"  # Preta
 co1 = "#feffff"  # branca
 co2 = "#4fa882"  # verde
 co3 = "#38576b"  # valor
 co4 = "#403d3d"   # letra
-co5 = "#e06636"   # - profit
+co5 = "#e06636"
 co6 = "#038cfc"
 co7 = "#3fbfb9"
 co8 = "#263238"
 co9 = "#e9edf5"
 co10 = "#22262b" #0D1117"
-co11 = "#383b41"
+co11 = "#383b41" #Background
 
 colors = ['#2ecc71', '#e74c3c','#3498db', '#ee9944', '#444466', '#bb5555']
+#colors = Verde, Vermelho, Azul
 
 #Criando Janela
 janela = Tk()
@@ -90,7 +95,7 @@ def grafico_bar():
     lista_valores = [3000, 2000, 6223]
 
     figura, ax = plt.subplots(figsize=(4, 3.45), dpi=60)
-    figura.patch.set_facecolor('#383b41')
+    figura.patch.set_facecolor(co11)
 
     barras = ax.bar(lista_categorias, lista_valores, color=colors, width=0.9)
 
@@ -106,7 +111,7 @@ def grafico_bar():
     # Configurações do eixo Y
     ax.yaxis.grid(False)
 
-    ax.patch.set_facecolor('#383b41')
+    ax.patch.set_facecolor(co11)
 
     ax.tick_params(axis='x', colors='white')
     ax.tick_params(axis='y', colors='white')
@@ -117,7 +122,7 @@ def grafico_bar():
         ax.spines[spine].set_linewidth(1)
 
     for spine in ['right', 'top']:
-        ax.spines[spine].set_color('#383b41')
+        ax.spines[spine].set_color(co11)
         ax.spines[spine].set_linewidth(1)
 
 
@@ -137,21 +142,21 @@ def resumo():
 
     l_linha = Label(frameMeio, text="", width=215, height=1, anchor= NW, font=('Arial 1'), bg=co1)
     l_linha.place(x=309, y=62)
-    l_sumario = Label(frameMeio, text="Total Da Renda Mensal      ", anchor=NW, font=('Verdana 12 bold'), bg=co11, fg="#2ecc71")
+    l_sumario = Label(frameMeio, text="Total Da Renda Mensal      ", anchor=NW, font=('Verdana 12 bold'), bg=co11, fg=colors[0])
     l_sumario.place(x=309, y=45)
     l_sumario = Label(frameMeio, text="R$ {:,.2f}".format(valor[0]), anchor=NW, font=('Arial 17'), bg=co11, fg=co1)
     l_sumario.place(x=309, y=70)
 
     l_linha = Label(frameMeio, text="", width=215, height=1, anchor=NW, font=('Arial 1'), bg=co1)
     l_linha.place(x=309, y=132)
-    l_sumario = Label(frameMeio, text="Total De Gasto Mensal    ", anchor=NW, font=('Verdana 12 bold'), bg=co11,fg="#e74c3c")
+    l_sumario = Label(frameMeio, text="Total De Gasto Mensal    ", anchor=NW, font=('Verdana 12 bold'), bg=co11,fg=colors[1])
     l_sumario.place(x=309, y=115)
     l_sumario = Label(frameMeio, text="R$ {:,.2f}".format(valor[1]), anchor=NW, font=('Arial 17'), bg=co11, fg=co1)
     l_sumario.place(x=309, y=150)
 
     l_linha = Label(frameMeio, text="", width=215, height=1, anchor=NW, font=('Arial 1'), bg=co1)
     l_linha.place(x=309, y=217)
-    l_sumario = Label(frameMeio, text="Total Saldo Em Caixa       ", anchor=NW, font=('Verdana 12 bold'), bg=co11,fg="#3498db")
+    l_sumario = Label(frameMeio, text="Total Saldo Em Caixa       ", anchor=NW, font=('Verdana 12 bold'), bg=co11,fg=colors[2])
     l_sumario.place(x=309, y=200)
     l_sumario = Label(frameMeio, text="R$ {:,.2f}".format(valor[2]), anchor=NW, font=('Arial 17'), bg=co11, fg=co1)
     l_sumario.place(x=309, y=230)
@@ -159,7 +164,7 @@ def resumo():
 #Função Grafico Pie
 def grafico_pie():
     #faça figura e atribua objetos de eixo
-    figura = plt.Figure(figsize=(5, 3), dpi=90, facecolor='#383b41')
+    figura = plt.Figure(figsize=(5, 3), dpi=90, facecolor=co11)
     ax = figura.add_subplot(111)
 
     lista_valores = [345, 225, 534]
@@ -215,6 +220,7 @@ def mostrar_renda():
 
     tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
 
+    frameRenda.grid(pady=(12, 0), padx=(5, 0))
 
     tree.grid(column=0, row=0, pady=0, padx=0, sticky='nsew')
     vsb.grid(column=1, row=0, padx= 0, pady=0, sticky='ns')
@@ -235,7 +241,46 @@ def mostrar_renda():
         tree.insert('', 'end', values=item)
 
 mostrar_renda()
-frameRenda.grid(pady=(12, 0), padx=(5,0))
+
+#Configurações Despesas-----------
+l_info = Label(frameOperacoes, text='Insira Novas Despesas', height='1', anchor=NW, font=('Verdana 12 bold'), bg=co11, fg=co1)
+l_info.place(x=10, y=0)
+
+#Categoria-------------------------
+l_Categoria = Label(frameOperacoes, text='Categoria', height='1', anchor=NW, font=('Ivy 10 bold'), bg=co11, fg=co1)
+l_Categoria.place(x=10, y=30)
+
+#Adicionando categorias------------
+categoria_funcao = ['Viagem', 'Comida']
+categoria = []
+
+for i in categoria_funcao:
+    categoria.append(i[1])
+combo_categoria_despesas = ttk.Combobox(frameOperacoes, width= 10, font=('Ivy 10'))
+combo_categoria_despesas['values'] = (categoria)
+combo_categoria_despesas.place(x=110, y=31)
+
+
+#Despesas-------------------------
+l_cal_Despesas = Label(frameOperacoes, text='Data', height='1', anchor=NW, font=('Ivy 10 bold'), bg=co11, fg=co1)
+l_cal_Despesas.place(x=10, y=60)
+e_cal_Despesas = DateEntry(frameOperacoes, width=12, background='#4b4f57', foreground=co1, borderwidth=2, year=2024)
+e_cal_Despesas.place(x=110, y=61)
+
+#Valor-------------------------
+l_valor_Despesas = Label(frameOperacoes, text='Valor Gasto R$', height='1', anchor=NW, font=('Ivy 10 bold'), bg=co11, fg=co1)
+l_valor_Despesas.place(x=10, y=90)
+e_valor_Despesas = Entry(frameOperacoes, width=14, justify='left', relief='solid')
+e_valor_Despesas.place(x=110, y=91)
+
+#Botão inserir
+img_add_despesas = Image.open('plus.png')
+img_add_despesas = img_add_despesas.resize((17,17))
+img_add_despesas = ImageTk.PhotoImage(img_add_despesas)
+
+botao_inserir_despesas = Button(frameOperacoes, image = img_add_despesas, text = "Adicionar".upper(), width=80, compound = LEFT, anchor= NW, font=("Ivy 7 bold"),bg= co11, fg=co1, overrelief=SUNKEN)
+botao_inserir_despesas.place(x=110, y=121)
+
 
 
 janela.mainloop()
