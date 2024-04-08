@@ -190,13 +190,13 @@ grafico_pie()
 
 #Criando frames dentro do frameBaixo
 frameRenda = Frame(frameBaixo, width=300, height=270, background=co11)
-frameRenda.grid(row=0, column=0) #padx=1
+frameRenda.grid(row=0, column=0)
 
 frameOperacoes = Frame(frameBaixo, width=220, height=270, background=co11)
-frameOperacoes.grid(row=0, column=1, padx=5)
+frameOperacoes.grid(row=0, column=1, padx=25, pady=15)
 
 frameConfiguracao = Frame(frameBaixo, width=220, height=270, background=co11)
-frameConfiguracao.grid(row=0, column=2, padx=5)
+frameConfiguracao.grid(row=0, column=2, padx=25, pady=15)
 
 #Tabela Renda Mensal------------------------------------------------
 app_tabela = Label(frameBaixo, text = "Tabela Receitas e Despesas", anchor= NW, font=("Verdana 12 bold"),bg= co11, fg=co1)
@@ -258,29 +258,72 @@ for i in categoria_funcao:
     categoria.append(i[1])
 combo_categoria_despesas = ttk.Combobox(frameOperacoes, width= 10, font=('Ivy 10'))
 combo_categoria_despesas['values'] = (categoria)
-combo_categoria_despesas.place(x=110, y=31)
+combo_categoria_despesas.place(x=120, y=31)
 
 
-#Despesas-------------------------
+#Configurações Despesas-------------------------------------------------------------------------------------------------
 l_cal_Despesas = Label(frameOperacoes, text='Data', height='1', anchor=NW, font=('Ivy 10 bold'), bg=co11, fg=co1)
 l_cal_Despesas.place(x=10, y=60)
 e_cal_Despesas = DateEntry(frameOperacoes, width=12, background='#4b4f57', foreground=co1, borderwidth=2, year=2024)
-e_cal_Despesas.place(x=110, y=61)
+e_cal_Despesas.place(x=120, y=61)
 
-#Valor-------------------------
-l_valor_Despesas = Label(frameOperacoes, text='Valor Gasto R$', height='1', anchor=NW, font=('Ivy 10 bold'), bg=co11, fg=co1)
+#Valor
+l_valor_Despesas = Label(frameOperacoes, text='Valor Total R$', height='1', anchor=NW, font=('Ivy 10 bold'), bg=co11, fg=co1)
 l_valor_Despesas.place(x=10, y=90)
 e_valor_Despesas = Entry(frameOperacoes, width=14, justify='left', relief='solid')
-e_valor_Despesas.place(x=110, y=91)
+e_valor_Despesas.place(x=120, y=91)
 
 #Botão inserir
 img_add_despesas = Image.open('plus.png')
 img_add_despesas = img_add_despesas.resize((17,17))
 img_add_despesas = ImageTk.PhotoImage(img_add_despesas)
-
 botao_inserir_despesas = Button(frameOperacoes, image = img_add_despesas, text = "Adicionar".upper(), width=80, compound = LEFT, anchor= NW, font=("Ivy 7 bold"),bg= co11, fg=co1, overrelief=SUNKEN)
-botao_inserir_despesas.place(x=110, y=121)
+botao_inserir_despesas.place(x=120, y=121)
 
+#Botão Excluir
+l_excluir_cat = Label(frameOperacoes, text='Excluir Ação', height='1', anchor=NW, font=('Ivy 10 bold'), bg=co11, fg=co1)
+l_excluir_cat.place(x=10, y=190)
+img_delete = Image.open('delete.png')
+img_delete = img_delete.resize((17,17))
+img_delete = ImageTk.PhotoImage(img_delete)
+botao_delete = Button(frameOperacoes, image = img_delete, text = "Excluir".upper(), width=80, compound = LEFT, anchor= NW, font=("Ivy 7 bold"),bg= co11, fg=co1, overrelief=SUNKEN)
+botao_delete.place(x=120, y=190)
+
+#Configurações Receitas-------------------------------------------------------------------------------------------------
+l_info = Label(frameConfiguracao, text='Insira Novas Receitas', height='1', anchor=NW, font=('Verdana 12 bold'), bg=co11, fg=co1)
+l_info.place(x=10, y=0)
+
+#Calendario Receitas
+l_cal_Receitas = Label(frameConfiguracao, text='Data', height='1', anchor=NW, font=('Ivy 10 bold'), bg=co11, fg=co1)
+l_cal_Receitas.place(x=10, y=30)
+e_cal_Receitas = DateEntry(frameConfiguracao, width=12, background='#4b4f57', foreground=co1, borderwidth=2, year=2024)
+e_cal_Receitas.place(x=120, y=31)
+
+#Valor (Receitas)
+l_valor_Receitas = Label(frameConfiguracao, text='Valor Total R$', height='1', anchor=NW, font=('Ivy 10 bold'), bg=co11, fg=co1)
+l_valor_Receitas.place(x=10, y=60)
+e_valor_Receitas = Entry(frameConfiguracao, width=14, justify='left', relief='solid')
+e_valor_Receitas.place(x=120, y=61)
+
+#Botão inserir
+img_add_receitas = Image.open('plus.png')
+img_add_receitas = img_add_receitas.resize((17,17))
+img_add_receitas = ImageTk.PhotoImage(img_add_receitas)
+botao_inserir_despesas = Button(frameConfiguracao, image = img_add_receitas, text = "Adicionar".upper(), width=80, compound = LEFT, anchor= NW, font=("Ivy 7 bold"),bg= co11, fg=co1, overrelief=SUNKEN)
+botao_inserir_despesas.place(x=120, y=91)
+
+#Configurações Nova Categoria-------------------------------------------------------------------------------------------
+l_info = Label(frameConfiguracao, text='Nova Categoria', height='1', anchor=NW, font=('Verdana 12 bold'), bg=co11, fg=co1)
+l_info.place(x=10, y=157)
+e_nome_categoria = Entry(frameConfiguracao, width=14, justify='left', relief='solid')
+e_nome_categoria.place(x=15, y=193)
+
+#Botão inserir
+img_add_categoria = Image.open('plus.png')
+img_add_categoria = img_add_categoria.resize((17,17))
+img_add_categoria = ImageTk.PhotoImage(img_add_categoria)
+botao_inserir_despesas = Button(frameConfiguracao, image = img_add_categoria, text = "Adicionar".upper(), width=80, compound = LEFT, anchor= NW, font=("Ivy 7 bold"),bg= co11, fg=co1, overrelief=SUNKEN)
+botao_inserir_despesas.place(x=120, y=190)
 
 
 janela.mainloop()
