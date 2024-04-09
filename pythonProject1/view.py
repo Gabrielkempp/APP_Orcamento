@@ -59,7 +59,7 @@ def ver_categoria():
     return lista_itens
 
 #ver Receitas
-def ver_categoria():
+def ver_receitas():
     lista_itens = []
 
     with con:
@@ -83,3 +83,28 @@ def ver_gastos():
             lista_itens.append(l)
 
     return lista_itens
+
+# Função para dados da tabela
+def tabela():
+    gastos = ver_gastos()
+    receitas = ver_receitas()
+
+    tabela_lista = []
+
+    for i in gastos:
+        tabela_lista.append(i)
+
+    for i in receitas:
+        tabela_lista.append(i)
+
+    return tabela_lista
+
+
+# Função para dados do grafico barra
+def bar_valores():
+    # Receita total ----------
+    receitas = ver_receitas()
+    receitas_lista = []
+
+    for i in receitas:
+        receitas_lista.append(i[3])

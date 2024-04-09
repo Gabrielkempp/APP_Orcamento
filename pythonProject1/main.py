@@ -1,5 +1,6 @@
 from tkinter import * #tambem pode usar "import tkinter"
 from tkinter import Tk, ttk
+from tkinter import messagebox
 
 #importando pillow
 from PIL import Image, ImageTk
@@ -15,6 +16,9 @@ from matplotlib.figure import Figure
 # Importando Calendario
 from tkcalendar import Calendar, DateEntry
 from datetime import date
+
+# Importando funções da view
+from view import bar_valores, inserir_categoria, inserir_receitas, inserir_gastos, ver_categoria
 
 #Cores
 co0 = "#2e2d2b"  # Preta
@@ -67,6 +71,35 @@ app_img = ImageTk.PhotoImage(app_img)
 
 app_logo = Label(frameCima, image = app_img, text = "  The Wallet", width=250, compound = LEFT, padx = 5 , anchor= NW, font=("Verdana 20 bold"),bg= co11, fg=co1)
 app_logo.place(x=315, y=0)
+
+#Definindo tree como variavel global
+global tree
+
+#Função inserir categoria
+def inserir_categoria_b():
+    nome = e_nome_categoria.get()
+
+    lista_inserir = [nome]
+
+    for i in lista_inserir:#Verifica se o valor e nulo
+        if i == '':
+            messagebox.showinfo('Erro!', 'Preencha todos os campos!')
+            return
+    # Passando a lista para a função inserir_gastos(view)
+    inserir_categoria(lista_inserir)
+    messagebox.showinfo('Sucesso!','Dados inseridos com sucesso!')
+
+    e_nome_categoria.delete(0, 'end')
+
+    # Pegando os valores da categoria
+    categorias_funcao = ver_categoria()
+    categoria = []
+
+    for i in categorias_funcao:
+        categoria.append(i[1])
+
+    # Atualizando a lista de categorias
+    combo_categoria_despesas['values'] = (categoria)
 
 # Percentagem ---------------------------------------------------------------
 def percentagem():
@@ -322,7 +355,7 @@ e_nome_categoria.place(x=15, y=193)
 img_add_categoria = Image.open('plus.png')
 img_add_categoria = img_add_categoria.resize((17,17))
 img_add_categoria = ImageTk.PhotoImage(img_add_categoria)
-botao_inserir_despesas = Button(frameConfiguracao, image = img_add_categoria, text = "Adicionar".upper(), width=80, compound = LEFT, anchor= NW, font=("Ivy 7 bold"),bg= co11, fg=co1, overrelief=SUNKEN)
+botao_inserir_despesas = Button(frameConfiguracao, command=inserir_categoria_b, image = img_add_categoria, text = "Adicionar".upper(), width=80, compound = LEFT, anchor= NW, font=("Ivy 7 bold"),bg= co11, fg=co1, overrelief=SUNKEN)
 botao_inserir_despesas.place(x=120, y=190)
 
 
