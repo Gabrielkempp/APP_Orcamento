@@ -18,7 +18,7 @@ from tkcalendar import Calendar, DateEntry
 from datetime import date
 
 # Importando funções da view
-from view import bar_valores, inserir_categoria, inserir_receitas, inserir_gastos, ver_categoria
+from view import bar_valores, inserir_categoria, inserir_receitas, inserir_gastos, ver_categoria, tabela, deletar_gastos, deletar_receitas
 
 #Cores
 co0 = "#2e2d2b"  # Preta
@@ -101,7 +101,89 @@ def inserir_categoria_b():
     # Atualizando a lista de categorias
     combo_categoria_despesas['values'] = (categoria)
 
-# Percentagem ---------------------------------------------------------------
+# Função inserir Receitas
+def inserir_receitas_b():
+    nome = 'Receita'
+    data = e_cal_Receitas.get()
+    quantia = e_valor_Receitas.get()
+    lista_inserir = [nome, data, quantia]
+
+    for i in lista_inserir:  # Verifica se o valor e nulo
+        if i == '':
+            messagebox.showerror('Erro!', 'Preencha todos os campos!')
+            return
+
+    # Passando a lista para a função inserir_receitas(view)
+    inserir_receitas(lista_inserir)
+    messagebox.showinfo('Sucesso!', 'Dados inseridos com sucesso!')
+
+    # Apagando o conteudo apos a manipulação deles
+    e_cal_Receitas.delete(0, 'end')
+    e_valor_Receitas.delete(0,'end')
+
+    # Atualizando dados
+    if i != '':
+        mostrar_renda()
+        percentagem()
+        grafico_bar()
+        resumo()
+        grafico_pie()
+
+# Função inserir Despesas
+def inserir_despesas_b():
+    nome = combo_categoria_despesas.get()
+    data = e_cal_Despesas.get()
+    quantia = e_valor_Despesas.get()
+    lista_inserir = [nome, data, quantia]
+
+    for i in lista_inserir:  # Verifica se o valor e nulo
+        if i == '':
+            messagebox.showerror('Erro!', 'Preencha todos os campos!')
+            return
+
+    # Passando a lista para a função inserir_gastos(view)
+    inserir_gastos(lista_inserir)
+    messagebox.showinfo('Sucesso!', 'Dados inseridos com sucesso!')
+
+    # Apagando o conteudo apos a manipulação deles
+    combo_categoria_despesas.delete(0,'end')
+    e_cal_Despesas.delete(0, 'end')
+    e_valor_Despesas.delete(0,'end')
+
+    # Atualizando dados
+    if i != '':
+        mostrar_renda()
+        percentagem()
+        grafico_bar()
+        resumo()
+        grafico_pie()
+
+# Função Deletar Despesas
+def deletar_dados():
+    try:
+        treev_dados = tree.focus()
+        treev_dicionario = tree.item(treev_dados)
+        treev_lista = treev_dicionario['values']
+        valor = treev_lista[0]
+        nome = treev_lista[1]
+
+        if nome == "Receita":
+            deletar_receitas([valor])
+            messagebox.showinfo("Sucesso!","Os dados foram DELETADOS com sucesso!")
+        else:
+            deletar_gastos([valor])
+            messagebox.showinfo("Sucesso!", "Os dados foram DELETADOS com sucesso!")
+
+        # Atualizar dados
+        mostrar_renda()
+        percentagem()
+        grafico_bar()
+        resumo()
+        grafico_pie()
+    except IndexError:
+        messagebox.showerror("ERRO!","Selecione um dos dados da tabela!")
+
+# Porcentagem ---------------------------------------------------------------
 def percentagem():
     l_nome = Label(frameMeio, text='Porcentagem da Receita Gasta', height= 1, anchor=NW, font= ('Verdana 12 bold'), bg=co11, fg=co1)
     l_nome.place(x=10, y=-10)
@@ -240,7 +322,7 @@ def mostrar_renda():
 
     tabela_head = ['#Id', 'Categoria', 'Data', 'Quantidade']
 
-    lista_itens = [[0, 2, 3, 4], [0, 2, 3, 4], [0, 2, 3, 4], [0, 2, 3, 4]]
+    lista_itens = tabela()
 
     global tree
 
@@ -284,8 +366,9 @@ l_Categoria = Label(frameOperacoes, text='Categoria', height='1', anchor=NW, fon
 l_Categoria.place(x=10, y=30)
 
 #Adicionando categorias------------
-categoria_funcao = ['Viagem', 'Comida']
+categoria_funcao = ver_categoria()
 categoria = []
+
 
 for i in categoria_funcao:
     categoria.append(i[1])
@@ -310,7 +393,7 @@ e_valor_Despesas.place(x=120, y=91)
 img_add_despesas = Image.open('plus.png')
 img_add_despesas = img_add_despesas.resize((17,17))
 img_add_despesas = ImageTk.PhotoImage(img_add_despesas)
-botao_inserir_despesas = Button(frameOperacoes, image = img_add_despesas, text = "Adicionar".upper(), width=80, compound = LEFT, anchor= NW, font=("Ivy 7 bold"),bg= co11, fg=co1, overrelief=SUNKEN)
+botao_inserir_despesas = Button(frameOperacoes, image = img_add_despesas, command= lambda: inserir_despesas_b(), text = "Adicionar".upper(), width=80, compound = LEFT, anchor= NW, font=("Ivy 7 bold"),bg= co11, fg=co1, overrelief=SUNKEN)
 botao_inserir_despesas.place(x=120, y=121)
 
 #Botão Excluir
@@ -319,7 +402,7 @@ l_excluir_cat.place(x=10, y=190)
 img_delete = Image.open('delete.png')
 img_delete = img_delete.resize((17,17))
 img_delete = ImageTk.PhotoImage(img_delete)
-botao_delete = Button(frameOperacoes, image = img_delete, text = "Excluir".upper(), width=80, compound = LEFT, anchor= NW, font=("Ivy 7 bold"),bg= co11, fg=co1, overrelief=SUNKEN)
+botao_delete = Button(frameOperacoes, command=deletar_dados, image = img_delete, text = "Excluir".upper(), width=80, compound = LEFT, anchor= NW, font=("Ivy 7 bold"),bg= co11, fg=co1, overrelief=SUNKEN)
 botao_delete.place(x=120, y=190)
 
 #Configurações Receitas-------------------------------------------------------------------------------------------------
@@ -342,7 +425,7 @@ e_valor_Receitas.place(x=120, y=61)
 img_add_receitas = Image.open('plus.png')
 img_add_receitas = img_add_receitas.resize((17,17))
 img_add_receitas = ImageTk.PhotoImage(img_add_receitas)
-botao_inserir_despesas = Button(frameConfiguracao, image = img_add_receitas, text = "Adicionar".upper(), width=80, compound = LEFT, anchor= NW, font=("Ivy 7 bold"),bg= co11, fg=co1, overrelief=SUNKEN)
+botao_inserir_despesas = Button(frameConfiguracao, command=inserir_receitas_b, image = img_add_receitas, text = "Adicionar".upper(), width=80, compound = LEFT, anchor= NW, font=("Ivy 7 bold"),bg= co11, fg=co1, overrelief=SUNKEN)
 botao_inserir_despesas.place(x=120, y=91)
 
 #Configurações Nova Categoria-------------------------------------------------------------------------------------------
@@ -355,7 +438,7 @@ e_nome_categoria.place(x=15, y=193)
 img_add_categoria = Image.open('plus.png')
 img_add_categoria = img_add_categoria.resize((17,17))
 img_add_categoria = ImageTk.PhotoImage(img_add_categoria)
-botao_inserir_despesas = Button(frameConfiguracao, command=inserir_categoria_b, image = img_add_categoria, text = "Adicionar".upper(), width=80, compound = LEFT, anchor= NW, font=("Ivy 7 bold"),bg= co11, fg=co1, overrelief=SUNKEN)
+botao_inserir_despesas = Button(frameConfiguracao, command= lambda: inserir_categoria_b, image = img_add_categoria, text = "Adicionar".upper(), width=80, compound = LEFT, anchor= NW, font=("Ivy 7 bold"),bg= co11, fg=co1, overrelief=SUNKEN)
 botao_inserir_despesas.place(x=120, y=190)
 
 
