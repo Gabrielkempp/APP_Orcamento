@@ -1,6 +1,8 @@
 #Importando SQLite
 import sqlite3 as lite
 
+import pandas as pd
+
 #Crando conexao
 con = lite.connect('dados.db')
 
@@ -102,9 +104,76 @@ def tabela():
 
 # Função para dados do grafico barra
 def bar_valores():
-    # Receita total ----------
+    # Receita total ---------------------------------------
     receitas = ver_receitas()
     receitas_lista = []
 
     for i in receitas:
         receitas_lista.append(i[3])
+
+    receita_total = sum(receitas_lista)
+
+    # Despesa total ---------------------------------------
+    despesa = ver_gastos()
+    despesa_lista = []
+
+    for i in despesa:
+        despesa_lista.append(i[3])
+
+    despesa_total = sum(despesa_lista)
+
+    # Saldo total ---------------------------------------
+    saldo_total = receita_total - despesa_total
+
+    return [receita_total, despesa_total, saldo_total]
+
+# Função Grafico Pie
+def pie_valores():
+    gastos = ver_gastos()
+
+    tabela_lista = []
+
+    for i in gastos:
+        tabela_lista.append(i)
+
+    dataframe = pd.DataFrame(tabela_lista, columns = ['id', 'Categoria', 'Data', 'Valor'])
+    dataframe = dataframe.groupby('Categoria')['Valor'].sum()
+
+    lista_quantias = dataframe.values.tolist()
+    lista_categorias = []
+
+    for i in dataframe.index:
+        lista_categorias.append(i)
+
+    return ([lista_categorias,lista_quantias])
+
+def porcentagem_valor():
+    # Receita Total ---------------------------------------
+    receitas = ver_receitas()
+    receitas_lista = []
+
+    if receitas:
+        for i in receitas:
+            receitas_lista.append(i[3])
+        receita_total = sum(receitas_lista)
+    else: receita_total = 0
+
+    # Despesa Total ---------------------------------------
+    despesa = ver_gastos()
+    despesa_lista = []
+
+    if despesa:
+        for i in despesa:
+            despesa_lista.append(i[3])
+        despesa_total = sum(despesa_lista)
+    else: despesa_total = 0
+
+    # Total gasto % ---------------------------------------
+    if receita_total == 0:
+        total_gasto = 0
+    else:
+        total_gasto = (despesa_total/receita_total)*100
+        if total_gasto > 100:
+            total_gasto = 100
+
+    return [total_gasto]

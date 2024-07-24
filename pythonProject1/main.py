@@ -1,6 +1,7 @@
 from tkinter import * #tambem pode usar "import tkinter"
 from tkinter import Tk, ttk
 from tkinter import messagebox
+import Banco_de_dados
 
 #importando pillow
 from PIL import Image, ImageTk
@@ -18,7 +19,8 @@ from tkcalendar import Calendar, DateEntry
 from datetime import date
 
 # Importando funções da view
-from view import bar_valores, inserir_categoria, inserir_receitas, inserir_gastos, ver_categoria, tabela, deletar_gastos, deletar_receitas
+from view import (bar_valores, inserir_categoria, inserir_receitas, inserir_gastos, ver_categoria, tabela, deletar_gastos,
+                  deletar_receitas, pie_valores, porcentagem_valor)
 
 #Cores
 co0 = "#2e2d2b"  # Preta
@@ -69,7 +71,8 @@ app_img = Image.open('coin.png')
 app_img = app_img.resize((40,40))
 app_img = ImageTk.PhotoImage(app_img)
 
-app_logo = Label(frameCima, image = app_img, text = "  The Wallet", width=250, compound = LEFT, padx = 5 , anchor= NW, font=("Verdana 20 bold"),bg= co11, fg=co1)
+app_logo = Label(frameCima, image = app_img, text = "  The Wallet", width=250, compound = LEFT, padx = 5 , anchor= NW,
+                 font=("Verdana 20 bold"),bg= co11, fg=co1)
 app_logo.place(x=315, y=0)
 
 #Definindo tree como variavel global
@@ -124,7 +127,7 @@ def inserir_receitas_b():
     # Atualizando dados
     if i != '':
         mostrar_renda()
-        percentagem()
+        porcentagem()
         grafico_bar()
         resumo()
         grafico_pie()
@@ -153,7 +156,7 @@ def inserir_despesas_b():
     # Atualizando dados
     if i != '':
         mostrar_renda()
-        percentagem()
+        porcentagem()
         grafico_bar()
         resumo()
         grafico_pie()
@@ -176,7 +179,7 @@ def deletar_dados():
 
         # Atualizar dados
         mostrar_renda()
-        percentagem()
+        porcentagem()
         grafico_bar()
         resumo()
         grafico_pie()
@@ -184,8 +187,9 @@ def deletar_dados():
         messagebox.showerror("ERRO!","Selecione um dos dados da tabela!")
 
 # Porcentagem ---------------------------------------------------------------
-def percentagem():
-    l_nome = Label(frameMeio, text='Porcentagem da Receita Gasta', height= 1, anchor=NW, font= ('Verdana 12 bold'), bg=co11, fg=co1)
+def porcentagem():
+    l_nome = Label(frameMeio, text='Porcentagem da Receita Gasta', height= 1, anchor=NW, font= ('Verdana 12 bold'),
+                   bg=co11, fg=co1)
     l_nome.place(x=10, y=-10)
 
     style = ttk.Style()
@@ -196,18 +200,18 @@ def percentagem():
     bar = Progressbar(frameMeio, length=180, style='black.Horizontal.TProgressbar')
 
     bar.place(x=15, y=20)
-    bar['value'] = 50
+    bar['value'] = porcentagem_valor()[0]
 
-    valor=50
+    valor = porcentagem_valor()[0]
 
-    l_percentagem = Label(frameMeio, text='{:,.2f}%'.format(valor), anchor=NW, font=('Verdana 12 bold'), bg=co11, fg=co1)
-    l_percentagem.place(x=200, y=17)
+    l_porcentagem = Label(frameMeio, text='{:,.2f}%'.format(valor), anchor=NW, font=('Verdana 12 bold'), bg=co11, fg=co1)
+    l_porcentagem.place(x=200, y=17)
 
 
 # Função para gráfico de barras ---------------------------
 def grafico_bar():
     lista_categorias = ['Renda', 'Despesa', 'Saldo']
-    lista_valores = [3000, 2000, 6223]
+    lista_valores = bar_valores()
 
     figura, ax = plt.subplots(figsize=(4, 3.45), dpi=60)
     figura.patch.set_facecolor(co11)
@@ -215,9 +219,16 @@ def grafico_bar():
     barras = ax.bar(lista_categorias, lista_valores, color=colors, width=0.9)
 
     for i, barra in enumerate(barras):
+        # Formata o valor com duas casas decimais
+        valor_str = f"{lista_valores[i]:,.2f}"
+
+        # Substitui vírgula por ponto e depois ponto por vírgula
+        valor_formatado = valor_str.replace(",", "X").replace(".", ",").replace("X", ".")
+
+        # Adiciona o texto na barra
         ax.text(barra.get_x() + barra.get_width() / 2, barra.get_height() + 0.5,
-                str("{:,.0f}".format(lista_valores[i])),
-                fontsize=17, fontstyle='italic', ha='center', va='bottom', color='white')
+                valor_formatado,
+                fontsize=13, fontstyle='italic', ha='center', va='bottom', color='white')
 
     # Configurações do eixo X
     ax.set_xticks(range(len(lista_categorias)))
@@ -253,27 +264,30 @@ def grafico_bar():
 
 #Função de Resumo total
 def resumo():
-    valor = [500, 600, 420]
+    valor = bar_valores()
+
+    def formatar_valor(val):
+        return "R$ {:,.2f}".format(val).replace(",", "X").replace(".", ",").replace("X", ".")
 
     l_linha = Label(frameMeio, text="", width=215, height=1, anchor= NW, font=('Arial 1'), bg=co1)
     l_linha.place(x=309, y=62)
     l_sumario = Label(frameMeio, text="Total Da Renda Mensal      ", anchor=NW, font=('Verdana 12 bold'), bg=co11, fg=colors[0])
     l_sumario.place(x=309, y=45)
-    l_sumario = Label(frameMeio, text="R$ {:,.2f}".format(valor[0]), anchor=NW, font=('Arial 17'), bg=co11, fg=co1)
+    l_sumario = Label(frameMeio, text=formatar_valor(valor[0]), anchor=NW, font=('Arial 17'), bg=co11, fg=co1)
     l_sumario.place(x=309, y=70)
 
     l_linha = Label(frameMeio, text="", width=215, height=1, anchor=NW, font=('Arial 1'), bg=co1)
     l_linha.place(x=309, y=132)
     l_sumario = Label(frameMeio, text="Total De Gasto Mensal    ", anchor=NW, font=('Verdana 12 bold'), bg=co11,fg=colors[1])
     l_sumario.place(x=309, y=115)
-    l_sumario = Label(frameMeio, text="R$ {:,.2f}".format(valor[1]), anchor=NW, font=('Arial 17'), bg=co11, fg=co1)
+    l_sumario = Label(frameMeio, text=formatar_valor(valor[1]), anchor=NW, font=('Arial 17'), bg=co11, fg=co1)
     l_sumario.place(x=309, y=150)
 
     l_linha = Label(frameMeio, text="", width=215, height=1, anchor=NW, font=('Arial 1'), bg=co1)
     l_linha.place(x=309, y=217)
     l_sumario = Label(frameMeio, text="Total Saldo Em Caixa       ", anchor=NW, font=('Verdana 12 bold'), bg=co11,fg=colors[2])
     l_sumario.place(x=309, y=200)
-    l_sumario = Label(frameMeio, text="R$ {:,.2f}".format(valor[2]), anchor=NW, font=('Arial 17'), bg=co11, fg=co1)
+    l_sumario = Label(frameMeio, text=formatar_valor(valor[2]), anchor=NW, font=('Arial 17'), bg=co11, fg=co1)
     l_sumario.place(x=309, y=230)
 
 #Função Grafico Pie
@@ -282,8 +296,8 @@ def grafico_pie():
     figura = plt.Figure(figsize=(5, 3), dpi=90, facecolor=co11)
     ax = figura.add_subplot(111)
 
-    lista_valores = [345, 225, 534]
-    lista_categorias = ['Renda', 'Despesa', 'Saldo']
+    lista_valores = pie_valores()[1]
+    lista_categorias = pie_valores()[0]
 
     #only "explode" the 2nd slice(i.e. 'Hogs')
 
@@ -298,7 +312,7 @@ def grafico_pie():
     canva_categoria = FigureCanvasTkAgg(figura, frame_gra_pie)
     canva_categoria.get_tk_widget().grid(row=10, column=20, padx=20, pady=0)
 
-percentagem()
+porcentagem()
 grafico_bar()
 resumo()
 grafico_pie()
@@ -393,7 +407,8 @@ e_valor_Despesas.place(x=120, y=91)
 img_add_despesas = Image.open('plus.png')
 img_add_despesas = img_add_despesas.resize((17,17))
 img_add_despesas = ImageTk.PhotoImage(img_add_despesas)
-botao_inserir_despesas = Button(frameOperacoes, image = img_add_despesas, command= lambda: inserir_despesas_b(), text = "Adicionar".upper(), width=80, compound = LEFT, anchor= NW, font=("Ivy 7 bold"),bg= co11, fg=co1, overrelief=SUNKEN)
+botao_inserir_despesas = Button(frameOperacoes, image = img_add_despesas, command= lambda: inserir_despesas_b(),
+                                text = "Adicionar".upper(), width=80, compound = LEFT, anchor= NW, font=("Ivy 7 bold"),bg= co11, fg=co1, overrelief=SUNKEN)
 botao_inserir_despesas.place(x=120, y=121)
 
 #Botão Excluir
@@ -402,7 +417,8 @@ l_excluir_cat.place(x=10, y=190)
 img_delete = Image.open('delete.png')
 img_delete = img_delete.resize((17,17))
 img_delete = ImageTk.PhotoImage(img_delete)
-botao_delete = Button(frameOperacoes, command=deletar_dados, image = img_delete, text = "Excluir".upper(), width=80, compound = LEFT, anchor= NW, font=("Ivy 7 bold"),bg= co11, fg=co1, overrelief=SUNKEN)
+botao_delete = Button(frameOperacoes, command=deletar_dados, image = img_delete, text = "Excluir".upper(), width=80,
+                      compound = LEFT, anchor= NW, font=("Ivy 7 bold"),bg= co11, fg=co1, overrelief=SUNKEN)
 botao_delete.place(x=120, y=190)
 
 #Configurações Receitas-------------------------------------------------------------------------------------------------
@@ -425,7 +441,8 @@ e_valor_Receitas.place(x=120, y=61)
 img_add_receitas = Image.open('plus.png')
 img_add_receitas = img_add_receitas.resize((17,17))
 img_add_receitas = ImageTk.PhotoImage(img_add_receitas)
-botao_inserir_despesas = Button(frameConfiguracao, command=inserir_receitas_b, image = img_add_receitas, text = "Adicionar".upper(), width=80, compound = LEFT, anchor= NW, font=("Ivy 7 bold"),bg= co11, fg=co1, overrelief=SUNKEN)
+botao_inserir_despesas = Button(frameConfiguracao, command=inserir_receitas_b, image = img_add_receitas, text = "Adicionar".upper(),
+                                width=80, compound = LEFT, anchor= NW, font=("Ivy 7 bold"),bg= co11, fg=co1, overrelief=SUNKEN)
 botao_inserir_despesas.place(x=120, y=91)
 
 #Configurações Nova Categoria-------------------------------------------------------------------------------------------
@@ -438,7 +455,8 @@ e_nome_categoria.place(x=15, y=193)
 img_add_categoria = Image.open('plus.png')
 img_add_categoria = img_add_categoria.resize((17,17))
 img_add_categoria = ImageTk.PhotoImage(img_add_categoria)
-botao_inserir_despesas = Button(frameConfiguracao, command= lambda: inserir_categoria_b, image = img_add_categoria, text = "Adicionar".upper(), width=80, compound = LEFT, anchor= NW, font=("Ivy 7 bold"),bg= co11, fg=co1, overrelief=SUNKEN)
+botao_inserir_despesas = Button(frameConfiguracao, command= lambda: inserir_categoria_b, image = img_add_categoria, text = "Adicionar".upper(),
+                                width=80, compound = LEFT, anchor= NW, font=("Ivy 7 bold"),bg= co11, fg=co1, overrelief=SUNKEN)
 botao_inserir_despesas.place(x=120, y=190)
 
 
