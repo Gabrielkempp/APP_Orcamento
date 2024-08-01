@@ -455,7 +455,7 @@ e_nome_categoria.place(x=15, y=193)
 img_add_categoria = Image.open('plus.png')
 img_add_categoria = img_add_categoria.resize((17,17))
 img_add_categoria = ImageTk.PhotoImage(img_add_categoria)
-botao_inserir_despesas = Button(frameConfiguracao, command= lambda: inserir_categoria_b, image = img_add_categoria, text = "Adicionar".upper(),
+botao_inserir_despesas = Button(frameConfiguracao, command= inserir_categoria_b, image = img_add_categoria, text = "Adicionar".upper(),
                                 width=80, compound = LEFT, anchor= NW, font=("Ivy 7 bold"),bg= co11, fg=co1, overrelief=SUNKEN)
 botao_inserir_despesas.place(x=120, y=190)
 
